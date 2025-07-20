@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 1st Safety Driving School Portal
 
 A Mobile App System for Streamlined Student Management and Data-Driven Analytics
@@ -34,3 +35,6 @@ To solve these challenges, we developed the 1st Safety Driving School Portal –
 3. Run the Application
 
 ## Ensure Flutter SDK and Firebase CLI are properly configured on your machine before running the project.##
+=======
+# 1st-Safety-Driving-School-Portal-App
+>>>>>>> b447ba2b8f6ab124985a94f0f51aa6e1efa4735d
