@@ -29,12 +29,43 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Email Sent'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: Colors.white,
+          title: Row(
+            children: const [
+              Icon(Icons.email_outlined, color: Colors.blue, size: 28),
+              SizedBox(width: 8),
+              Text(
+                'Email Sent',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
           content: const Text(
             'A password reset email has been sent.\nPlease check your inbox or spam folder.',
+            style: TextStyle(fontSize: 16, height: 1.5),
+            textAlign: TextAlign.center,
           ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
