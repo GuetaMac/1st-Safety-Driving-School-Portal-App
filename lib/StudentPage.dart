@@ -936,80 +936,148 @@ class EnrollmentPage extends StatelessWidget {
                     final downPayment = data['downPayment'] ?? 0;
 
                     return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      elevation: 3,
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      elevation: 4,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             /// ✅ Course Title
                             Text(
-                              data['course'] ?? 'Course',
+                              data['course'] ?? 'Course Title',
                               style: const TextStyle(
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
                                 color: Colors.red,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 10),
+                            Divider(),
 
-                            /// ✅ Instructor
-                            Text(
-                              'Instructor: ${data['instructor'] ?? 'Pending'}',
+                            /// ✅ Instructor & Schedule
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.person,
+                                  size: 18,
+                                  color: Colors.black54,
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    'Instructor: ${data['instructor'] ?? 'Pending'}',
+                                    style: const TextStyle(
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 8),
-
-                            /// ✅ Schedule Info
+                            const SizedBox(height: 6),
                             if (data['scheduleDate'] != null)
-                              Text('Schedule: ${data['scheduleDate']}'),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.calendar_today,
+                                    size: 18,
+                                    color: Colors.black54,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      'Schedule: ${data['scheduleDate']}',
+                                      style: const TextStyle(
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             if (data['startTime'] != null &&
                                 data['endTime'] != null)
-                              Text(
-                                'Time: ${data['startTime']} - ${data['endTime']}',
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.access_time,
+                                    size: 18,
+                                    color: Colors.black54,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Time: ${data['startTime']} - ${data['endTime']}',
+                                  ),
+                                ],
                               ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 10),
+                            Divider(),
 
-                            /// ✅ Status
+                            /// ✅ Status Badge
                             Row(
                               children: [
                                 const Text('Status: '),
-                                Text(
-                                  status,
-                                  style: TextStyle(
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
                                     color: status == 'Passed/Completed'
-                                        ? Colors.green
-                                        : Colors.orange,
-                                    fontWeight: FontWeight.bold,
+                                        ? Colors.green[100]
+                                        : Colors.orange[100],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    status,
+                                    style: TextStyle(
+                                      color: status == 'Passed/Completed'
+                                          ? Colors.green
+                                          : Colors.orange,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
 
-                            /// ✅ Payment Status
+                            /// ✅ Payment Badge
+                            const SizedBox(height: 8),
                             Row(
                               children: [
                                 const Text('Payment: '),
-                                Text(
-                                  isFullyPaid ? 'Fully Paid' : 'Not Fully Paid',
-                                  style: TextStyle(
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
                                     color: isFullyPaid
-                                        ? Colors.green
-                                        : Colors.red,
-                                    fontWeight: FontWeight.w500,
+                                        ? Colors.green[100]
+                                        : Colors.red[100],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    isFullyPaid
+                                        ? 'Fully Paid'
+                                        : 'Not Fully Paid',
+                                    style: TextStyle(
+                                      color: isFullyPaid
+                                          ? Colors.green
+                                          : Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
 
-                            /// ✅ Price and Down Payment
+                            /// ✅ Price Section
+                            const SizedBox(height: 12),
                             Text(
-                              'Price: ${_formatCurrency(price)}',
+                              'Total Price: ${_formatCurrency(price)}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1021,9 +1089,9 @@ class EnrollmentPage extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 12),
 
                             /// ✅ Feedback Button
+                            const SizedBox(height: 16),
                             if (status == 'Passed/Completed')
                               StreamBuilder<QuerySnapshot>(
                                 stream: FirebaseFirestore.instance
@@ -1031,15 +1099,13 @@ class EnrollmentPage extends StatelessWidget {
                                     .where('enrollmentId', isEqualTo: doc.id)
                                     .snapshots(),
                                 builder: (context, fbSnapshot) {
-                                  if (!fbSnapshot.hasData) {
+                                  if (!fbSnapshot.hasData)
                                     return const SizedBox();
-                                  }
-
                                   final hasFeedback =
                                       fbSnapshot.data!.docs.isNotEmpty;
 
-                                  return Align(
-                                    alignment: Alignment.centerRight,
+                                  return SizedBox(
+                                    width: double.infinity,
                                     child: ElevatedButton(
                                       onPressed: (!isFullyPaid || hasFeedback)
                                           ? null
@@ -1053,14 +1119,27 @@ class EnrollmentPage extends StatelessWidget {
                                             },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red,
-                                        disabledBackgroundColor: Colors.grey,
+                                        disabledBackgroundColor:
+                                            Colors.grey[400],
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 14,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
                                       ),
                                       child: Text(
                                         hasFeedback
                                             ? 'Feedback Submitted'
                                             : (!isFullyPaid
-                                                  ? 'Pay First'
-                                                  : 'Give Feedback'),
+                                                  ? 'Settle Payment First'
+                                                  : 'Submit Feedback'),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   );
@@ -1260,7 +1339,10 @@ class EnrollmentPage extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text('Submit'),
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
