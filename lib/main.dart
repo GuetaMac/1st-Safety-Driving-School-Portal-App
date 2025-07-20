@@ -1,12 +1,12 @@
 import 'package:final_app/admin.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // <-- importante ito
+import 'firebase_options.dart';
 import 'LoginPage.dart';
 import 'RegisterPage.dart';
 import 'StudentPage.dart';
-import 'manager.dart'; // Import the manager dashboard page
-import 'instructor.dart'; // Import the instructor dashboard page
+import 'manager.dart';
+import 'instructor.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

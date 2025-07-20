@@ -180,7 +180,10 @@ class _LoginPageState extends State<LoginPage> {
                             _showResetPasswordConfirmation();
                           }
                         },
-                  child: Text(isLoading ? 'Please wait...' : 'Submit'),
+                  child: Text(
+                    isLoading ? 'Please wait...' : 'Submit',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             );
