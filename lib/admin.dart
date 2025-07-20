@@ -898,7 +898,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
   TimeOfDay? startTime;
   TimeOfDay? endTime;
   bool isSeminar = false;
-  String filterOption = 'All'; // NEW: filter state
+  String filterOption = 'All';
   final TextEditingController slotsController = TextEditingController();
 
   Future<void> pickDate() async {
@@ -944,7 +944,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
         startTime == null ||
         endTime == null ||
         slotsController.text.isEmpty) {
-      _showMessage("Please fill in all fields.");
+      _showMessage("Please fill in all fields.", success: false);
       return;
     }
 
@@ -952,6 +952,47 @@ class _SchedulesPageState extends State<SchedulesPage> {
         ? "Theoretical Driving Course (TDC)"
         : "Driving Session";
 
+    // Build schedule summary
+    String summary =
+        '''
+Course: $course
+Date: ${selectedDate!.month}/${selectedDate!.day}/${selectedDate!.year}
+Time: ${startTime!.format(context)} - ${endTime!.format(context)}
+Slots: ${slotsController.text}
+Seminar: ${isSeminar ? "Yes" : "No"}
+''';
+
+    // Show confirmation dialog
+    bool confirmed = await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text(
+          'Confirm Schedule Details',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text(summary),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Confirm & Create'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) {
+      return; // Cancelled by admin
+    }
+
+    // Proceed to save
     try {
       await FirebaseFirestore.instance.collection('schedules').add({
         'course': course,
@@ -967,6 +1008,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
       });
 
       _showMessage("Schedule created successfully!");
+
       setState(() {
         selectedDate = null;
         startTime = null;
@@ -975,20 +1017,59 @@ class _SchedulesPageState extends State<SchedulesPage> {
         slotsController.clear();
       });
     } catch (e) {
-      _showMessage("Error: $e");
+      _showMessage("Error: $e", success: false);
     }
   }
 
-  void _showMessage(String msg) {
+  void _showMessage(String msg, {bool success = true}) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Info"),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Text(
+          success ? "Success!" : "Notice",
+          style: TextStyle(
+            color: success ? Colors.green : Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: Text(msg),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("OK"),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteSchedule(String id) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: const Text(
+          'Delete Schedule?',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: const Text('Are you sure you want to delete this schedule?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deleteSchedule(id);
+              _showMessage("Schedule deleted successfully.");
+            },
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -1271,7 +1352,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
                               color: Colors.red,
                             ),
                             onPressed: () =>
-                                _deleteSchedule(schedules[index].id),
+                                _confirmDeleteSchedule(schedules[index].id),
                           ),
                         ],
                       ),
