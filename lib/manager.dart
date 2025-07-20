@@ -417,64 +417,6 @@ class _RecordsPageState extends State<RecordsPage> {
     );
   }
 
-  void showEditDialog(String docId, Map<String, dynamic> data) {
-    final nameController = TextEditingController(text: data['fullName']);
-    final emailController = TextEditingController(text: data['email']);
-    String role = data['role'];
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Edit Account'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Full Name'),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: role,
-              items: [
-                'admin',
-                'instructor',
-              ].map((r) => DropdownMenuItem(value: r, child: Text(r))).toList(),
-              onChanged: (val) => role = val!,
-              decoration: const InputDecoration(labelText: 'Role'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(docId)
-                  .update({
-                    'fullName': nameController.text,
-                    'email': emailController.text,
-                    'role': role,
-                  });
-              Navigator.pop(context);
-              showSuccessDialog('Account updated successfully.');
-            },
-            child: const Text('Save Changes'),
-          ),
-        ],
-      ),
-    );
-  }
-
   void showDeleteConfirmation(String docId) {
     showDialog(
       context: context,
@@ -667,14 +609,6 @@ class _RecordsPageState extends State<RecordsPage> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Colors.blue,
-                                ),
-                                onPressed: () =>
-                                    showEditDialog(users[index].id, data),
-                              ),
                               IconButton(
                                 icon: const Icon(
                                   Icons.delete,
